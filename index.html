@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827">
+<title>System Enhancer</title>
+<style>
+:root{--bg:#0b1020;--panel:#151d32;--panel2:#1c2842;--text:#edf2ff;--muted:#9eaccb;--gold:#f6c85f;--blue:#79a9ff;--green:#61d6a5;--red:#ff7b87;--line:#2b3856}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1b2a4a 0,#0b1020 52%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:24px 18px 14px;max-width:1050px;margin:auto}h1{margin:0;font-size:27px;letter-spacing:.3px}header p{color:var(--muted);margin:5px 0 0}
+main{max-width:1050px;margin:auto;padding:0 16px 40px;display:grid;gap:14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:linear-gradient(145deg,var(--panel),#111a2e);border:1px solid var(--line);border-radius:17px;padding:16px;box-shadow:0 8px 24px #0003}
+.card h2{font-size:16px;margin:0 0 12px}.big{font-size:25px;font-weight:800}.muted{color:var(--muted)}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.bar{height:10px;border-radius:20px;background:#0a1121;overflow:hidden;margin:9px 0}.bar span{display:block;height:100%;background:linear-gradient(90deg,#6d9fff,#6ee7bb);width:0%}
+.stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #26324d}.stat:last-child{border:0}
+button{border:0;border-radius:10px;padding:10px 13px;background:var(--blue);color:#081326;font-weight:750;cursor:pointer}button.secondary{background:#2b3b5d;color:var(--text)}button.gold{background:var(--gold)}button:disabled{opacity:.4;cursor:not-allowed}
+input,select{width:100%;background:#0c1426;border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;margin:5px 0 10px}
+label{font-size:12px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.pill{background:#263653;color:#cfe0ff;border-radius:30px;padding:5px 9px;font-size:12px}
+.ability{padding:11px 0;border-bottom:1px solid var(--line)}.ability:last-child{border:0}.ability small{color:var(--muted)}
+.notice{font-size:12px;color:var(--muted);line-height:1.5}.positive{color:var(--green)}.negative{color:var(--red)}
+footer{max-width:1050px;margin:auto;padding:0 16px 30px;color:var(--muted);font-size:12px}
+@media(min-width:760px){.wide{grid-column:span 2}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#111827">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="System Enhancer">
+<link rel="icon" href="icon-192.png">
+
+</head>
+<body>
+<header><div class="row"><div><h1>⚡ System Enhancer</h1><p>Your real-life productivity RPG</p></div><span class="pill" id="levelTag">LEVEL 1</span></div></header>
+<main>
+<section class="grid">
+ <div class="card"><div class="muted">LEVEL</div><div class="big" id="level">1</div><div class="bar"><span id="xpBar"></span></div><div class="row"><span id="xpText">0 / 100 XP</span><span class="pill" id="points">0 points</span></div></div>
+ <div class="card"><div class="muted">COINS</div><div class="big" id="coins">0</div><div class="notice">10 coins can be exchanged for 1 gem.</div></div>
+ <div class="card"><div class="muted">GEMS</div><div class="big" id="gems">0 💎</div><div class="notice">Keep your daily streak alive to earn 5 gems per day.</div></div>
+ <div class="card"><div class="muted">DAILY STREAK</div><div class="big" id="streak">0 days</div><button class="gold" id="claim">Claim today's streak</button><div class="notice" id="streakNote">Claim once per calendar day.</div></div>
+</section>
+<section class="grid">
+ <div class="card"><h2>📊 Attributes</h2><div id="stats"></div><p class="notice">Spend 3 points each time you level up. Each point adds 1% break bonus to matching tasks.</p></div>
+ <div class="card"><h2>🎲 Current buff / debuff</h2><div id="buff" class="big">None</div><p id="buffDesc" class="notice">Level up to receive a random temporary effect. It lasts until your next level-up roll.</p><div class="actions"><button class="secondary" id="roll" disabled>Roll on level-up</button></div></div>
+ <div class="card"><h2>😈 Seven sins tracker</h2><div id="sins"></div><p class="notice">Track these as reflection scores, not labels about who you are. Holiness is your overall virtue score.</p></div>
+</section>
+<section class="grid">
+ <div class="card wide"><h2>✅ Complete a task</h2><div class="grid">
+  <div><label>Task name</label><input id="taskName" placeholder="e.g. Revise biology"></div>
+  <div><label>Task group</label><select id="taskGroup"><option value="IQ">Revision / learning (IQ)</option><option value="Speed">Quick tasks / chores (Speed)</option><option value="Strength">Exercise / practical work (Strength)</option><option value="Durability">Long focus session (Durability)</option><option value="Holiness">Kindness / good deeds (Holiness)</option></select></div>
+  <div><label>Minutes worked</label><input id="minutes" type="number" min="1" value="60"></div>
+  <div><label>XP earned</label><input value="Automatically equals minutes worked" disabled></div>
+ </div><div class="actions"><button id="complete">Complete task + earn rewards</button></div><p id="breakResult" class="notice">Your break reward will appear here.</p></div>
+ <div class="card"><h2>🪙 Wallet exchange</h2><p class="muted">Trade 10 coins for 1 gem.</p><button class="gold" id="exchange">Exchange 10 coins → 1 gem</button><p class="notice" id="exchangeNote"></p></div>
+</section>
+<section class="grid">
+ <div class="card wide"><h2>✨ Weekly abilities</h2><p class="notice">Abilities reset every Monday. Each purchase costs 5 gems. Effects are capped at level 10.</p><div id="abilities"></div><p id="abilityNote" class="notice"></p></div>
+ <div class="card"><h2>🛠️ Upgrades</h2><div id="upgrades"></div><p class="notice">Upgrades are permanent. Prices increase with each purchase.</p></div>
+</section>
+<section class="grid">
+ <div class="card"><h2>🤝 Team features</h2><p>Challenge a friend together and each of you can earn 2 bonus coins.</p><button id="challenge">Log a team challenge (+2 coins)</button><p class="notice">Trading, gifting and shared Forest trees need an online account/server or the Forest app; this offline prototype can't sync between phones yet.</p></div>
+ <div class="card"><h2>🎁 Level-up rewards</h2><p class="notice">Every 100 XP grants a level, 3 attribute points, and one random buff/debuff. No coins or gems are wagered or lost in random rolls.</p><div id="history" class="notice">No level-ups yet.</div></div>
+</section>
+</main>
+<footer>Prototype saves progress on this device in this browser. Export this project as an APK by packaging the web app with an Android WebView wrapper or moving it into a game engine. Keep real-life breaks healthy and take them when you need them.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const defaultState=()=>({level:1,xp:0,coins:0,gems:0,streak:0,lastClaim:"",points:0,stats:{IQ:0,Speed:0,Strength:0,Durability:0,Holiness:0},sins:{Sloth:0,Lust:0,Wrath:0,Gluttony:0,Pride:0,Envy:0,Greed:0},buff:null,abilities:{xp:0,coin:0,pomodoro:0,break:0},upgrades:{xp:0,coin:0,break:0},week:weekKey(),history:[]});
+let s;try{s=Object.assign(defaultState(),JSON.parse(localStorage.getItem("systemEnhancerSave")||"{}"));}catch{s=defaultState();}
+s.stats=Object.assign(defaultState().stats,s.stats||{});s.sins=Object.assign(defaultState().sins,s.sins||{});s.abilities=Object.assign(defaultState().abilities,s.abilities||{});s.upgrades=Object.assign(defaultState().upgrades,s.upgrades||{});
+function weekKey(){let d=new Date(),n=new Date(d);n.setDate(d.getDate()-((d.getDay()+6)%7));return n.getFullYear()+"-"+n.getMonth()+"-"+n.getDate();}
+function save(){localStorage.setItem("systemEnhancerSave",JSON.stringify(s));render();}
+function fmt(n){return Number(n).toLocaleString(undefined,{maximumFractionDigits:1});}
+function render(){
+ $("level").textContent=s.level;$("levelTag").textContent="LEVEL "+s.level;$("xpText").textContent=s.xp+" / 100 XP";$("xpBar").style.width=(s.xp)+"%";$("points").textContent=s.points+" points";$("coins").textContent=s.coins;$("gems").textContent=s.gems+" 💎";$("streak").textContent=s.streak+" days";
+ const today=new Date().toISOString().slice(0,10);$("claim").disabled=s.lastClaim===today;$("streakNote").textContent=s.lastClaim===today?"Today's 5 gems claimed. Come back tomorrow!":"Claim once per day. Missing a day resets the streak.";
+ $("stats").innerHTML=Object.entries(s.stats).map(([k,v])=>`<div class="stat"><span>${k}</span><b>${v} <button class="secondary" style="padding:4px 8px" onclick="spend('${k}')">+</button></b></div>`).join("");
+ $("sins").innerHTML=Object.entries(s.sins).map(([k,v])=>`<div class="stat"><span>${k}</span><b>${v}</b></div>`).join("")+`<div class="stat"><span>Holiness (overall)</span><b>${s.stats.Holiness}</b></div>`;
+ $("buff").textContent=s.buff?s.buff.name:"None";$("buffDesc").textContent=s.buff?s.buff.desc:"Level up to receive a temporary effect.";
+ $("roll").disabled=true;
+ if(s.week!==weekKey()){s.week=weekKey();s.abilities={xp:0,coin:0,pomodoro:0,break:0};}
+ const names={xp:"XP Surge",coin:"Coin Surge",pomodoro:"Pomodoro",break:"Break Enhancer"};
+ const desc={xp:"+10% XP per rank",coin:"+10% coins per rank",pomodoro:"+5 minutes to a focused work interval per rank",break:"+5% break reward per rank"};
+ $("abilities").innerHTML=Object.keys(names).map(k=>`<div class="ability"><div class="row"><b>${names[k]} (${s.abilities[k]}/10)</b><button class="gold" onclick="buyAbility('${k}')" ${s.abilities[k]>=10||s.gems<5?"disabled":""}>5 💎</button></div><small>${desc[k]}</small></div>`).join("");
+ const up={xp:"XP Mastery",coin:"Coin Mastery",break:"Rest Mastery"};
+ const ud={xp:"+2% XP per upgrade",coin:"+2% coins per upgrade",break:"+2% break reward per upgrade"};
+ $("upgrades").innerHTML=Object.keys(up).map(k=>{let cost=10+s.upgrades[k]*10;return `<div class="ability"><div class="row"><b>${up[k]} Lv.${s.upgrades[k]}</b><button class="secondary" onclick="buyUpgrade('${k}')" ${s.coins<cost?"disabled":""}>${cost} coins</button></div><small>${ud[k]}</small></div>`}).join("");
+ $("history").textContent=s.history.length?s.history.slice(-3).join(" • "):"No level-ups yet.";
+}
+function spend(k){if(s.points<=0){alert("You have no attribute points to spend.");return;}s.stats[k]++;s.points--;save();}
+function gainXP(amount){s.xp+=amount;while(s.xp>=100){s.xp-=100;s.level++;s.points+=3;const pool=[["Focused Mind","Gain +15% XP until your next level-up."],["Quick Hands","Gain +15% coins until your next level-up."],["Deep Rest","Gain +15% break rewards until your next level-up."],["Distraction","Earn 10% less XP until your next level-up."]];let p=pool[Math.floor(Math.random()*pool.length)];s.buff={name:p[0],desc:p[1]};s.history.push("Level "+s.level+": "+p[0]);} }
+function claim(){let today=new Date().toISOString().slice(0,10);if(s.lastClaim===today)return;let y=new Date();y.setDate(y.getDate()-1);let yesterday=y.toISOString().slice(0,10);s.streak=s.lastClaim===yesterday?s.streak+1:1;s.lastClaim=today;s.gems+=5;save();}
+function buyAbility(k){if(s.gems<5||s.abilities[k]>=10)return;s.gems-=5;s.abilities[k]++;save();}
+function buyUpgrade(k){let cost=10+s.upgrades[k]*10;if(s.coins<cost)return;s.coins-=cost;s.upgrades[k]++;save();}
+$("claim").onclick=claim;
+$("exchange").onclick=()=>{if(s.coins<10){$("exchangeNote").textContent="You need 10 coins.";return;}s.coins-=10;s.gems++;$("exchangeNote").textContent="Exchange complete!";save();};
+$("complete").onclick=()=>{let mins=Math.max(1,Number($("minutes").value)||1),baseXP=mins,group=$("taskGroup").value;
+let xpMult=1+s.abilities.xp*.10+s.upgrades.xp*.02,coinMult=1+s.abilities.coin*.10+s.upgrades.coin*.02,breakMult=1+s.abilities.break*.05+s.upgrades.break*.02;
+if(s.buff?.name==="Focused Mind")xpMult*=1.15;if(s.buff?.name==="Quick Hands")coinMult*=1.15;if(s.buff?.name==="Deep Rest")breakMult*=1.15;if(s.buff?.name==="Distraction")xpMult*=.9;
+let earnedXP=Math.round(baseXP*xpMult),earnedCoins=Math.max(1,Math.round(Math.ceil(mins/15)*coinMult));gainXP(earnedXP);s.coins+=earnedCoins;
+let baseBreak=Math.floor(mins/2),bonus=baseBreak*(s.stats[group]/100),breakMins=(baseBreak+bonus)*breakMult;
+$("breakResult").textContent=`Completed! +${earnedXP} XP, +${earnedCoins} coins. Break reward: ${fmt(breakMins)} minutes (${group} bonus: ${s.stats[group]}%).`;
+if($("taskName").value.trim()){$("taskName").value="";}save();};
+$("challenge").onclick=()=>{s.coins+=2;save();alert("Team challenge logged! +2 coins. Your friend should log their own reward too.");};
+render();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => console.log("Offline setup:", err));
+  });
+}
+</script>
+
+</body></html>
